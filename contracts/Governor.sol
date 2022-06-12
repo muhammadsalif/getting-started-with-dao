@@ -1,39 +1,49 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.2;
+pragma solidity ^0.8.0;
 
-import "./governance/Governor.sol";
-import "./governance/compatibility/GovernorCompatibilityBravo.sol";
-import "./governance/extensions/GovernorVotes.sol";
-import "./governance/extensions/GovernorVotesQuorumFraction.sol";
-import "./governance/extensions/GovernorTimelockControl.sol";
+import "@openzeppelin/contracts/governance/Governor.sol";
+import "@openzeppelin/contracts/governance/extensions/GovernorCountingSimple.sol";
+import "@openzeppelin/contracts/governance/extensions/GovernorVotes.sol";
+import "@openzeppelin/contracts/governance/extensions/GovernorVotesQuorumFraction.sol";
+import "@openzeppelin/contracts/governance/extensions/GovernorTimelockControl.sol";
 
-contract MyGovernor is
+// NOTE: Contract created with the help of --> https://wizard.openzeppelin.com/#governor
+
+contract Governance is
     Governor,
-    GovernorCompatibilityBravo,
+    GovernorCountingSimple,
     GovernorVotes,
     GovernorVotesQuorumFraction,
     GovernorTimelockControl
 {
-    constructor(IVotes _token, TimelockController _timelock)
-        Governor("MyGovernor")
+    uint256 public votingDelay_;
+    uint256 public votingPeriod_;
+
+    constructor(
+        ERC20Votes _token,
+        TimelockController _timelock,
+        uint256 _quorum,
+        uint256 _votingDelay,
+        uint256 _votingPeriod
+    )
+        Governor("DApp University DAO")
         GovernorVotes(_token)
-        GovernorVotesQuorumFraction(4)
+        GovernorVotesQuorumFraction(_quorum)
         GovernorTimelockControl(_timelock)
-    {}
-
-    function votingDelay() public pure override returns (uint256) {
-        return 6575; // 1 day
+    {
+        votingDelay_ = _votingDelay;
+        votingPeriod_ = _votingPeriod;
     }
 
-    function votingPeriod() public pure override returns (uint256) {
-        return 46027; // 1 week
+    function votingDelay() public view override returns (uint256) {
+        return votingDelay_;
     }
 
-    function proposalThreshold() public pure override returns (uint256) {
-        return 0;
+    function votingPeriod() public view override returns (uint256) {
+        return votingPeriod_;
     }
 
-    // The functions below are overrides required by Solidity.
+    // The following functions are overrides required by Solidity.
 
     function quorum(uint256 blockNumber)
         public
@@ -56,7 +66,7 @@ contract MyGovernor is
     function state(uint256 proposalId)
         public
         view
-        override(Governor, IGovernor, GovernorTimelockControl)
+        override(Governor, GovernorTimelockControl)
         returns (ProposalState)
     {
         return super.state(proposalId);
@@ -67,11 +77,7 @@ contract MyGovernor is
         uint256[] memory values,
         bytes[] memory calldatas,
         string memory description
-    )
-        public
-        override(Governor, GovernorCompatibilityBravo, IGovernor)
-        returns (uint256)
-    {
+    ) public override(Governor, IGovernor) returns (uint256) {
         return super.propose(targets, values, calldatas, description);
     }
 
@@ -106,7 +112,7 @@ contract MyGovernor is
     function supportsInterface(bytes4 interfaceId)
         public
         view
-        override(Governor, IERC165, GovernorTimelockControl)
+        override(Governor, GovernorTimelockControl)
         returns (bool)
     {
         return super.supportsInterface(interfaceId);
