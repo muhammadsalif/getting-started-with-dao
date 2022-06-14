@@ -1,7 +1,7 @@
-const Token = artifacts.require("Token")
-const Timelock = artifacts.require("Timelock")
-const Governance = artifacts.require("Governance")
-const Treasury = artifacts.require("Treasury")
+const Token = artifacts.require("Token");
+const Timelock = artifacts.require("Timelock");
+const Governance = artifacts.require("Governance");
+const Treasury = artifacts.require("Treasury");
 
 
 module.exports = async function (deployer) {
@@ -36,8 +36,9 @@ module.exports = async function (deployer) {
   const quorum = 5 // Percentage of total supply of tokens needed to aprove proposals (5%)
   const votingDelay = 0 // How many blocks after proposal until voting becomes active
   const votingPeriod = 5 // How many blocks to allow voters to vote
-
-  await deployer.deploy(Governance, token.address, timelock.address, quorum, votingDelay, votingPeriod)
+  console.log("token.address", token.address)
+  console.log("timelock.address", timelock.address)
+  await deployer.deploy(Governance, token.address, timelock.address)
   const governance = await Governance.deployed()
 
   // Deploy Treasury
