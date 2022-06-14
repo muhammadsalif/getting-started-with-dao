@@ -1,5 +1,5 @@
 {
-  "name": "getting-started-with-dao",
+  "name": "governance",
   "version": "1.0.0",
   "description": "",
   "main": "truffle-config.js",
@@ -9,17 +9,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/muhammadsalif/getting-started-with-dao.git"
-  },
   "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/muhammadsalif/getting-started-with-dao/issues"
-  },
-  "homepage": "https://github.com/muhammadsalif/getting-started-with-dao#readme",
   "dependencies": {
-    "@openzeppelin/contracts": "^4.6.0"
+    "@openzeppelin/contracts": "^4.4.2",
+    "web3": "^1.7.0"
   }
 }
